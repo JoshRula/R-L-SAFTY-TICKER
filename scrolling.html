@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrolling Messages</title>
+    <style>
+        #scrolling-container {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+        #scrolling {
+            display: inline-block;
+            font-size: 24px;
+            font-weight: bold;
+            position: relative;
+            white-space: nowrap;
+            will-change: transform;
+            animation: scrollText 20s linear infinite;
+        }
+        @keyframes scrollText {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body>
+    <div id="scrolling-container">
+        <div id="scrolling">Loading messages...</div>
+    </div>
+
+    <script>
+        async function fetchMessages() {
+            const url = "https://script.google.com/macros/s/AKfycbxjkVLzu2uAWbh5IDw4oG1dZhh3FMilInP5qT0RPe62WkFstmLKcqMbCLWhm0-xl4xv/exec";
+            try {
+                const response = await fetch(url);
+                const messages = await response.json();
+                document.getElementById("scrolling").innerText = messages.join(" • ");
+            } catch (error) {
+                document.getElementById("scrolling").innerText = "Failed to load messages.";
+            }
+        }
+
+        fetchMessages();
+        setInterval(fetchMessages, 5000);
+    </script>
+</body>
+</html>
