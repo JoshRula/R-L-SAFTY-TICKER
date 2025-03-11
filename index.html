@@ -14,16 +14,19 @@
     <script>
         function submitMessage() {
             const message = document.getElementById("message").value;
-            const url = "https://script.google.com/macros/s/AKfycbyKYKp4apwnUdfG-gpi9XVRLJQygTm6_01mwID01EklkMi9Y71kcwIVo_PErKM2R4gP/exec"; // Replace with your script URL
+            const formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdsf2jh6N.../formResponse"; // Replace with your actual form URL
 
-            fetch(url, {
+            const formData = new FormData();
+            formData.append("entry.1522372880", message);
+
+            fetch(formUrl, {
                 method: "POST",
-                body: JSON.stringify({ message }),
-                headers: { "Content-Type": "application/json" }
+                body: formData,
+                mode: "no-cors"
             })
-            .then(response => response.text())
-            .then(data => {
+            .then(() => {
                 document.getElementById("status").innerText = "Message submitted!";
+                document.getElementById("message").value = ""; // Clear field
             })
             .catch(error => {
                 document.getElementById("status").innerText = "Error submitting message!";
