@@ -8,10 +8,10 @@
     <style>
         :root {
             /* Adjust these to position the scrolling text box behind the bezel */
-            --display-left: 0.5%;
-            --display-top: 35%;
-            --display-width: 99%;
-            --display-height: 25%;
+            --display-left: 10%;
+            --display-top: 25%;
+            --display-width: 80%;
+            --display-height: 20%; /* Increased height for larger text */
         }
 
         body {
@@ -40,9 +40,10 @@
             background-color: black;
             color: #00ff00;
             font-family: "Doto", "Courier New", Courier, monospace;
-            font-size: 13vw;
+            font-size: 12vw; /* Increased font size */
             display: flex;
             align-items: center;
+            justify-content: center;
             overflow: hidden;
             z-index: 1;
         }
@@ -74,7 +75,7 @@
         <div class="dot-matrix">
             <div class="scrolling-text" id="scrolling">Loading messages...</div>
         </div>
-        <img class="bezel" src="bezel1.png" alt="Bezel Overlay">
+        <img class="bezel" src="rlfirst%20bezel.png" alt="Bezel Overlay">
     </div>
 
     <script>
@@ -83,7 +84,8 @@
             try {
                 const response = await fetch(url);
                 const messages = await response.json();
-                document.getElementById("scrolling").innerText = messages.join(" • ");
+                const latestMessages = messages.slice(-3); // Get the 3 most recent messages
+                document.getElementById("scrolling").innerText = latestMessages.join(" • ");
             } catch (error) {
                 document.getElementById("scrolling").innerText = "Failed to load messages.";
             }
