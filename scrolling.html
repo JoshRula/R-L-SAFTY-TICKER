@@ -92,7 +92,7 @@
             try {
                 const response = await fetch(url);
                 const messages = await response.json();
-                const latestMessages = messages.slice(-3); // Get the 3 most recent messages
+                const latestMessages = messages; // Get the 3 most recent messages
                 
                 const textContent = latestMessages.join(" • ");
                 document.getElementById("scrolling-text-1").innerText = textContent;
@@ -102,7 +102,7 @@
                 const textWidth = document.querySelector(".scrolling-text").scrollWidth / 2;
                 const containerWidth = document.querySelector(".dot-matrix").offsetWidth;
                 
-                const duration = Math.max(15, textWidth / containerWidth * 20); // Ensures at least 10s duration
+                const duration = Math.max(10, textWidth / containerWidth * 10); // Ensures at least 10s duration
                 document.querySelector(".scrolling-text").style.animation = `scroll-left ${duration}s linear infinite`;
             } catch (error) {
                 document.getElementById("scrolling-text-1").innerText = "Failed to load messages.";
