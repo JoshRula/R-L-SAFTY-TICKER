@@ -7,11 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Adjust these to position the scrolling text box behind the bezel */
             --display-left: 0.5%;
             --display-top: 30%;
             --display-width: 99%;
-            --display-height: 35%; /* Increased height for larger text */
+            --display-height: 35%;
         }
 
         body {
@@ -40,10 +39,10 @@
             background-color: black;
             color: #00ff00;
             font-family: "Doto", "Courier New", Courier, monospace;
-            font-size: 15vw; /* Increased font size */
+            font-size: 15vw;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: start; /* Align left for smooth scrolling */
             overflow: hidden;
             z-index: 1;
         }
@@ -52,16 +51,11 @@
             white-space: nowrap;
             will-change: transform;
             display: flex;
-            animation: scroll-left 20s linear infinite;
+            align-items: center;
         }
 
         .scrolling-text span {
             padding-right: 50vw; /* Space between duplicated text */
-        }
-
-        @keyframes scroll-left {
-            from { transform: translateX(100%); }
-            to { transform: translateX(-100%); }
         }
 
         .bezel {
@@ -73,13 +67,20 @@
             pointer-events: none;
             z-index: 2;
         }
+
+        /* Dynamic animation keyframes (JS will set duration) */
+        @keyframes scroll-left {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
     </style>
 </head>
 <body>
     <div class="screen-container">
         <div class="dot-matrix">
             <div class="scrolling-text" id="scrolling">
-                <span id="scrolling-text">Loading messages...</span>
+                <span id="scrolling-text"></span>
+                <span id="scrolling-text-copy"></span> <!-- Duplicate for seamless scroll -->
             </div>
         </div>
         <img class="bezel" src="bezel1.png" alt="Bezel Overlay">
@@ -91,16 +92,28 @@
             try {
                 const response = await fetch(url);
                 const messages = await response.json();
-                const latestMessages = messages; // Get the 3 most recent messages
                 
-                const textContent = latestMessages.join(" • ");
-                document.getElementById("scrolling-text").innerText = textContent; // Ensures at least 10s duration
-                const duration = latestMessages.length * 10; // 10s per message
-                document.querySelector(".scrolling-text").style.animation = `scroll-left ${duration}s linear infinite`;
+                const textContent = messages.join(" • ");
+                
+                // Update both text spans for smooth looping
+                document.getElementById("scrolling-text").innerText = textContent;
+                document.getElementById("scrolling-text-copy").innerText = textContent;
+                
+                adjustAnimationSpeed();
             } catch (error) {
-                document.getElementById("scrolling-text-1").innerText = "Failed to load messages.";
-                document.getElementById("scrolling-text-2").innerText = "Failed to load messages.";
+                document.getElementById("scrolling-text").innerText = "Failed to load messages.";
+                document.getElementById("scrolling-text-copy").innerText = "Failed to load messages.";
             }
+        }
+
+        function adjustAnimationSpeed() {
+            const scrollingText = document.querySelector(".scrolling-text");
+            const textWidth = scrollingText.scrollWidth / 2; // Only measure one copy
+            const containerWidth = document.querySelector(".dot-matrix").clientWidth;
+            
+            // Dynamic duration based on text length, minimum 20s
+            const duration = Math.max(20, (textWidth / containerWidth) * 10); 
+            scrollingText.style.animation = `scroll-left ${duration}s linear infinite`;
         }
 
         fetchMessages();
