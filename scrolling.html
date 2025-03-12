@@ -42,7 +42,7 @@
             font-size: 15vw;
             display: flex;
             align-items: center;
-            justify-content: start; /* Align left for smooth scrolling */
+            justify-content: start;
             overflow: hidden;
             z-index: 1;
         }
@@ -55,7 +55,7 @@
         }
 
         .scrolling-text span {
-            padding-right: 50vw; /* Space between duplicated text */
+            padding-right: 50vw;
         }
 
         .bezel {
@@ -68,7 +68,6 @@
             z-index: 2;
         }
 
-        /* Dynamic animation keyframes (JS will set duration) */
         @keyframes scroll-left {
             from { transform: translateX(100%); }
             to { transform: translateX(-100%); }
@@ -79,14 +78,24 @@
     <div class="screen-container">
         <div class="dot-matrix">
             <div class="scrolling-text" id="scrolling">
-                <span id="scrolling-text"></span>
-                <span id="scrolling-text-copy"></span> <!-- Duplicate for seamless scroll -->
+                <span id="scrolling-text">Loading Messages...</span>
+                <span id="scrolling-text-copy">Loading Messages...</span> <!-- Duplicate for looping -->
             </div>
         </div>
         <img class="bezel" src="bezel1.png" alt="Bezel Overlay">
     </div>
 
     <script>
+        let messagesLoaded = false;
+
+        function startLoadingAnimation() {
+            if (!messagesLoaded) {
+                document.getElementById("scrolling-text").innerText = "Loading Messages...";
+                document.getElementById("scrolling-text-copy").innerText = "Loading Messages...";
+                adjustAnimationSpeed();
+            }
+        }
+
         async function fetchMessages() {
             const url = "https://script.google.com/macros/s/AKfycbzcN87Sxzeoeckszb_Ecm_0tjjDFxxxm2RMdIXSvKML-U4u_m1wEzoCSCi9ja9PGOac/exec";
             try {
@@ -95,10 +104,10 @@
                 
                 const textContent = messages.join(" • ");
                 
-                // Update both text spans for smooth looping
                 document.getElementById("scrolling-text").innerText = textContent;
                 document.getElementById("scrolling-text-copy").innerText = textContent;
                 
+                messagesLoaded = true;
                 adjustAnimationSpeed();
             } catch (error) {
                 document.getElementById("scrolling-text").innerText = "Failed to load messages.";
@@ -108,14 +117,15 @@
 
         function adjustAnimationSpeed() {
             const scrollingText = document.querySelector(".scrolling-text");
-            const textWidth = scrollingText.scrollWidth / 2; // Only measure one copy
+            const textWidth = scrollingText.scrollWidth / 2;
             const containerWidth = document.querySelector(".dot-matrix").clientWidth;
             
-            // Dynamic duration based on text length, minimum 20s
-            const duration = Math.max(20, (textWidth / containerWidth) * 10); 
+            const duration = Math.max(40, (textWidth / containerWidth) * 10);
             scrollingText.style.animation = `scroll-left ${duration}s linear infinite`;
         }
 
+        // Start loading message loop until messages arrive
+        startLoadingAnimation();
         fetchMessages();
         setInterval(fetchMessages, 32000);
     </script>
