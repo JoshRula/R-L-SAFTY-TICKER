@@ -12,6 +12,8 @@
             --display-top: 25%;
             --display-width: 80%;
             --display-height: 20%; /* Increased height for larger text */
+            --scroll-min-duration: 10s; /* Minimum scrolling duration */
+            --scroll-speed-factor: 10; /* Adjust this factor to fine-tune speed */
         }
 
         body {
@@ -51,7 +53,6 @@
         .scrolling-text {
             white-space: nowrap;
             will-change: transform;
-            animation: scroll-left 20s linear infinite;
         }
 
         @keyframes scroll-left {
@@ -85,7 +86,17 @@
                 const response = await fetch(url);
                 const messages = await response.json();
                 const latestMessages = messages.slice(-3); // Get the 3 most recent messages
-                document.getElementById("scrolling").innerText = latestMessages.join(" • ");
+                
+                const scrollingElement = document.getElementById("scrolling");
+                scrollingElement.innerText = latestMessages.join(" • ");
+                
+                // Calculate scrolling speed based on text length
+                const textWidth = scrollingElement.scrollWidth;
+                const containerWidth = document.querySelector(".dot-matrix").offsetWidth;
+                
+                const duration = Math.max(parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--scroll-min-duration')), 
+                                         textWidth / containerWidth * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--scroll-speed-factor')));
+                scrollingElement.style.animation = `scroll-left ${duration}s linear infinite`;
             } catch (error) {
                 document.getElementById("scrolling").innerText = "Failed to load messages.";
             }
