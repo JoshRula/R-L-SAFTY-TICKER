@@ -56,7 +56,7 @@
         }
 
         .scrolling-text span {
-            padding-right: 30vw; /* Space between duplicated text */
+            padding-right: 50vw; /* Space between duplicated text */
         }
 
         @keyframes scroll-left {
@@ -96,14 +96,8 @@
                 
                 const textContent = latestMessages.join(" • ");
                 document.getElementById("scrolling-text-1").innerText = textContent;
-                document.getElementById("scrolling-text-2").innerText = textContent;
-                
-                // Calculate scrolling speed based on text length
-                const textWidth = document.querySelector(".scrolling-text").scrollWidth / 2;
-                const containerWidth = document.querySelector(".dot-matrix").offsetWidth;
-                
-                const duration = Math.max(10, textWidth / containerWidth * 10); // Ensures at least 10s duration
-                document.querySelector(".scrolling-text").style.animation = `scroll-left ${duration}s linear infinite`;
+                document.getElementById("scrolling-text-2").innerText = textContent; // Ensures at least 10s duration
+                document.querySelector(".scrolling-text").style.animation = `scroll-left 20s linear infinite`;
             } catch (error) {
                 document.getElementById("scrolling-text-1").innerText = "Failed to load messages.";
                 document.getElementById("scrolling-text-2").innerText = "Failed to load messages.";
