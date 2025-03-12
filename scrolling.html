@@ -120,7 +120,7 @@
             const textWidth = scrollingText.scrollWidth / 2;
             const containerWidth = document.querySelector(".dot-matrix").clientWidth;
             
-            const duration = Math.max(40, (textWidth / containerWidth) * 10);
+            const duration = Math.max(10, (textWidth / containerWidth) * 10);
             scrollingText.style.animation = `scroll-left ${duration}s linear infinite`;
         }
 
