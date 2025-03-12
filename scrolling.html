@@ -56,7 +56,7 @@
         }
 
         .scrolling-text span {
-            padding-right: 30vw; /* Space between duplicated text */
+            padding-right: 50vw; /* Space between duplicated text */
         }
 
         @keyframes scroll-left {
@@ -79,8 +79,7 @@
     <div class="screen-container">
         <div class="dot-matrix">
             <div class="scrolling-text" id="scrolling">
-                <span id="scrolling-text-1">Loading messages...</span>
-                <span id="scrolling-text-2">Loading messages...</span>
+                <span id="scrolling-text">Loading messages...</span>
             </div>
         </div>
         <img class="bezel" src="bezel1.png" alt="Bezel Overlay">
@@ -95,9 +94,9 @@
                 const latestMessages = messages; // Get the 3 most recent messages
                 
                 const textContent = latestMessages.join(" • ");
-                document.getElementById("scrolling-text-1").innerText = textContent;
-                document.getElementById("scrolling-text-2").innerText = textContent; // Ensures at least 10s duration
-                document.querySelector(".scrolling-text").style.animation = `scroll-left 20s linear infinite`;
+                document.getElementById("scrolling-text").innerText = textContent; // Ensures at least 10s duration
+                const duration = latestMessages.length * 10; // 10s per message
+                document.querySelector(".scrolling-text").style.animation = `scroll-left ${duration}s linear infinite`;
             } catch (error) {
                 document.getElementById("scrolling-text-1").innerText = "Failed to load messages.";
                 document.getElementById("scrolling-text-2").innerText = "Failed to load messages.";
@@ -105,7 +104,7 @@
         }
 
         fetchMessages();
-        setInterval(fetchMessages, 50000);
+        setInterval(fetchMessages, 5000);
     </script>
 </body>
 </html>
