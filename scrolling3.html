@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrolling Messages</title>
+    <link href="https://fonts.googleapis.com/css2?family=Doto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --display-left: 0.5%;
+            --display-top: 30%;
+            --display-width: 99%;
+            --display-height: 35%;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: black;
+            overflow: hidden;
+        }
+
+        .screen-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .dot-matrix {
+            position: absolute;
+            left: var(--display-left);
+            top: var(--display-top);
+            width: var(--display-width);
+            height: var(--display-height);
+            background-color: black;
+            color: #00ff00;
+            font-family: "Doto", "Courier New", Courier, monospace;
+            font-size: 15vw;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .scrolling-text {
+            white-space: nowrap;
+            will-change: transform;
+            display: flex;
+            align-items: center;
+        }
+
+        .scrolling-text span {
+            padding-right: 50vw;
+        }
+
+        .bezel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        @keyframes scroll-left {
+            from { transform: translateX(100%); }
+            to { transform: translateX(-100%); }
+        }
+    </style>
+</head>
+<body>
+    <div class="screen-container">
+        <div class="dot-matrix">
+            <div class="scrolling-text" id="scrolling">
+                <span id="scrolling-text">Loading Messages...</span>
+                <span id="scrolling-text-copy">Loading Messages...</span> <!-- Duplicate for looping -->
+            </div>
+        </div>
+        <img class="bezel" src="bezel3.png" alt="Bezel Overlay">
+    </div>
+
+    <script>
+        let messagesLoaded = false;
+
+        function startLoadingAnimation() {
+            if (!messagesLoaded) {
+                document.getElementById("scrolling-text").innerText = "Loading Messages...";
+                document.getElementById("scrolling-text-copy").innerText = "Loading Messages...";
+                adjustAnimationSpeed();
+            }
+        }
+
+        async function fetchMessages() {
+            const url = "https://script.google.com/macros/s/AKfycbzcN87Sxzeoeckszb_Ecm_0tjjDFxxxm2RMdIXSvKML-U4u_m1wEzoCSCi9ja9PGOac/exec";
+            try {
+                const response = await fetch(url);
+                const messages = await response.json();
+                
+                const textContent = messages.join(" • ");
+                
+                document.getElementById("scrolling-text").innerText = textContent;
+                document.getElementById("scrolling-text-copy").innerText = textContent;
+                
+                messagesLoaded = true;
+                adjustAnimationSpeed();
+            } catch (error) {
+                document.getElementById("scrolling-text").innerText = "Failed to load messages.";
+                document.getElementById("scrolling-text-copy").innerText = "Failed to load messages.";
+            }
+        }
+
+        function adjustAnimationSpeed() {
+            const scrollingText = document.querySelector(".scrolling-text");
+            const textWidth = scrollingText.scrollWidth / 2;
+            const containerWidth = document.querySelector(".dot-matrix").clientWidth;
+            
+            const duration = Math.max(10, (textWidth / containerWidth) * 10);
+            scrollingText.style.animation = `scroll-left ${duration}s linear infinite`;
+        }
+
+        // Start loading message loop until messages arrive
+        startLoadingAnimation();
+        fetchMessages();
+        setInterval(fetchMessages, 32000);
+    </script>
+</body>
+</html>
